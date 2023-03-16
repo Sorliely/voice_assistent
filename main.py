@@ -3,7 +3,7 @@ import sounddevice as sd
 import queue
 import json
 import  words
-from skils import *
+import skils
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.linear_model import LogisticRegression
 
@@ -21,10 +21,11 @@ def callback(indata, frames, time, status):
     чем меньше значение в blocksize тем быстрее будет обрабатываться запрос"""
     q.put(bytes(indata))
 
-def recognize(data, vectorizer, clf):
+
+def recognize(data, vectorizer, clf, speaker=None):
     """обрабатывает запросы, проверяет свое имя
     Дата отвечает за чтение записи с микрофона"""
-    trg = words.triggers.intersection(data.split())
+    trg = words.name.intersection(data.split())
     if not trg:
         return
 
@@ -39,11 +40,11 @@ def main():
     """получаем ключи враз из словаря для машиного обучения
     конвертирует это все в список и передает в модуль"""
     vectorizer = CountVectorizer()
-    vectors = vectorizer.fit_transform(list(words.data_set.keys()))
+    vectors = vectorizer.fit_transform(list(words.commands.keys()))
     clf = LogisticRegression()
-    clf.fit(vectors, list(words.data_set.values()))
+    clf.fit(vectors, list(words.commands.values()))
 
-    del words.data_set
+    del words.commands
 
 
     with sd.RawInputStream(samplerate=samplerate, blocksize= 2000, device=device[0], dtype= 'int16',

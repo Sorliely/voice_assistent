@@ -1,49 +1,60 @@
-import os, sys, webbrowser, requests, subprocess, pyttsx3, voice, time
-from main import main
+import os, sys, webbrowser, requests, subprocess, pyttsx3, voice
+import query
+
+from words import *
+from random import choice
 
 
-engine = pyttsx3.init()
-engine.setProperty('rate', 180)
 
-def speaker(text):
-    engine.say(text)
-    engine.setProperty("voice",180)
-    engine.runAndWait()
-def browser(data):
-    """Открывает браузер по умолчанию с url заданным здесь"""
-    webbrowser.open('https://' + data, new=2)
 
-def youTube():
-    """открывает ютуб"""
-    webbrowser.open('https://www.youtube.com', new=2)
 
-def windy():
-    webbrowser.open('https://www.windy.com/ru/-%D0%94%D0%BE%D0%B6%D0%B4%D1%8C-%D0%B3%D1%80%D0%BE%D0%B7%D0%B0-rain?rain,'
-                    '44.020,43.077,10', new=2)
-def game():
-    """Открывает любую программу если здесь указан путь exe к нужному файлу"""
-    try:
-        subprocess.Popen('D:\python\python project\game\venv.exe')
-    except:
-        speaker('Путь к файлу не найден, проверьте правильный ли он')
+alexa = pyttsx3.init() #инициализация голоса
+voice_id = r"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\TokenEnums\RHVoice\Pavel"
 
-def offpc():
-    """Откулючает PC"""
-    os.system('shutdown \s')
-    print('Пк выключен')
+# настройки синтеза речи
+alexa.setProperty("rate", 180)
+alexa.setProperty("volume", 1)
+alexa.setProperty("voice", voice_id)
 
-def weather():
-    """Для работы этого кода нужно зарегистрироваться на сайте
-	https://openweathermap.org или переделать на ваше усмотрение под что-то другое"""
-    print('weather')
+class Alexa():
+    #
+    def __init__(self, query):
+        self.query = query
+'''   def speaker(text):
+        alexa.say(text)
+        alexa.setProperty("voice",180)
+        alexa.runAndWait()
+    def browser(data):
+        """Открывает браузер по умолчанию с url заданным здесь"""
+        webbrowser.open('https://' + data, new=2)
 
-def offBot():
-    """Выключает бота"""
-    sys.exit()
+    def youTube():
+        """открывает ютуб"""
+        webbrowser.open('https://www.youtube.com', new=2)
 
-def timer():
-    """ставит таймер"""
+    def game():
+        """Открывает любую программу если здесь указан путь exe к нужному файлу"""
+        try:
+            subprocess.Popen('D:\python\python project\game\venv.exe')
+        except:
+            speaker('Путь к файлу не найден, проверьте правильный ли он')
 
-def passive():
-    """Функция заглушки при простом диалоге с ботом"""
-    print(passive)
+
+    def offBot():
+        """Выключает бота"""
+        sys.exit()
+'''
+
+
+
+class Talk(Alexa): # Класс для функции общения
+    def answer(self):
+        for func in commands:
+            if func == self.query:
+                alexa.say(choice(commands.get(func)))
+                alexa.runAndWait()
+
+                if self.query == 'exit':
+                    alexa.stop()
+                    quit()
+
